@@ -31,7 +31,7 @@ public class DefaultNotificationService implements NotificationService {
         return notification;
     }
 
-    public void sendEmail(Notification notification) {
+    private void sendEmail(Notification notification) {
         emailService.sendEmail(notification);
         notificationAuditRepo.audit(NotificationStatus.SENT, notification);
     }

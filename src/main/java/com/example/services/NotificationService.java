@@ -10,8 +10,6 @@ public interface NotificationService {
 
     Notification createNotification(NotificationDTO notificationDTO);
 
-    void sendEmail(Notification notification);
-
     Notification listNotification(NotificationStatus status);
 
     Notification delete(UUID id);
