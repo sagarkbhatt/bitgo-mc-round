@@ -9,20 +9,22 @@ import com.example.repositories.NotificationRepo;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.Arrays.asList;
-
 public class DefaultNotificationService implements NotificationService {
     private NotificationRepo notificationRepo;
     private NotificationAuditRepo notificationAuditRepo;
     private EmailService emailService;
 
-    public DefaultNotificationService(NotificationRepo notificationRepo, NotificationAuditRepo notificationAuditRepo) {
-        this.notificationAuditRepo = new NotificationAuditRepo();
-        this.notificationRepo = new NotificationRepo();
+    public DefaultNotificationService(NotificationRepo notificationRepo,
+                                      NotificationAuditRepo notificationAuditRepo,
+                                      EmailService emailService) {
+        this.emailService = emailService;
+        this.notificationAuditRepo = notificationAuditRepo;
+        this.notificationRepo = notificationRepo;
     }
 
     @Override
     public Notification createNotification(NotificationDTO notificationDTO) {
+        System.out.println("Creating notification");
         Notification notification = Notification.from(notificationDTO);
         notification.setStatus(NotificationStatus.NEW);
         notificationRepo.persist(notification);
@@ -34,15 +36,22 @@ public class DefaultNotificationService implements NotificationService {
     private void sendEmail(Notification notification) {
         emailService.sendEmail(notification);
         notificationAuditRepo.audit(NotificationStatus.SENT, notification);
+        notification.setStatus(NotificationStatus.SENT);
     }
 
     @Override
-    public Notification listNotification(NotificationStatus status) {
-        return null;
+    public List<Notification> listNotification(NotificationStatus status) {
+        System.out.println("Listing notification");
+        return notificationAuditRepo.getNotificationByStatus(status);
     }
 
     @Override
     public Notification delete(UUID id) {
-        return null;
+        System.out.println("Deleting notification");
+        Notification deletedNotification = notificationRepo.delete(id);
+        notificationAuditRepo.audit(NotificationStatus.DELETED, deletedNotification);
+        deletedNotification.setStatus(NotificationStatus.DELETED);
+        System.out.println("Notification deleted with id " + id);
+        return deletedNotification;
     }
 }

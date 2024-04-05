@@ -1,7 +1,10 @@
 package com.example.models;
 
 import com.example.dtos.NotificationDTO;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -12,13 +15,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Notification {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    private String currentPrice;
+    private Long currentPrice;
 
     private Long marketVolume;
 
@@ -30,7 +32,7 @@ public class Notification {
 
     private NotificationStatus status;
 
-    public Notification(String currentPrice,
+    public Notification(Long currentPrice,
                         Long marketVolume,
                         LocalDate day,
                         Long dailyHigh, Long marketCap
